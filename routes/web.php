@@ -16,7 +16,16 @@ Route::get('/', function () {
 });
 
 Route::prefix('clients')->group(function () {
-    Route::get('/create', function () {
+    Route::get('/login', function () {
+        return view('vendor.passport.login');
+    });
+
+    Route::get('/', function () {
+        return view('vendor.passport.clients');
+    });
+
+    Route::get('/personal_access', function () {
         return view('vendor.passport.create');
     });
+
 });

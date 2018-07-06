@@ -27,46 +27,46 @@
 
                 <table class="table table-borderless mb-0" v-if="clients.length > 0">
                     <thead>
-                        <tr>
-                            <th>Client ID</th>
-                            <th>Name</th>
-                            <th>Secret</th>
-                            <th></th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>Client ID</th>
+                        <th>Name</th>
+                        <th>Secret</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
                     </thead>
 
                     <tbody>
-                        <tr v-for="client in clients">
-                            <!-- ID -->
-                            <td style="vertical-align: middle;">
-                                {{ client.id }}
-                            </td>
+                    <tr v-for="client in clients">
+                        <!-- ID -->
+                        <td style="vertical-align: middle;">
+                            {{ client.id }}
+                        </td>
 
-                            <!-- Name -->
-                            <td style="vertical-align: middle;">
-                                {{ client.name }}
-                            </td>
+                        <!-- Name -->
+                        <td style="vertical-align: middle;">
+                            {{ client.name }}
+                        </td>
 
-                            <!-- Secret -->
-                            <td style="vertical-align: middle;">
-                                <code>{{ client.secret }}</code>
-                            </td>
+                        <!-- Secret -->
+                        <td style="vertical-align: middle;">
+                            <code>{{ client.secret }}</code>
+                        </td>
 
-                            <!-- Edit Button -->
-                            <td style="vertical-align: middle;">
-                                <a class="action-link" tabindex="-1" @click="edit(client)">
-                                    Edit
-                                </a>
-                            </td>
+                        <!-- Edit Button -->
+                        <td style="vertical-align: middle;">
+                            <a class="action-link" tabindex="-1" @click="edit(client)">
+                                Edit
+                            </a>
+                        </td>
 
-                            <!-- Delete Button -->
-                            <td style="vertical-align: middle;">
-                                <a class="action-link text-danger" @click="destroy(client)">
-                                    Delete
-                                </a>
-                            </td>
-                        </tr>
+                        <!-- Delete Button -->
+                        <td style="vertical-align: middle;">
+                            <a class="action-link text-danger" @click="destroy(client)">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
             </div>
@@ -104,7 +104,7 @@
 
                                 <div class="col-md-9">
                                     <input id="create-client-name" type="text" class="form-control"
-                                                                @keyup.enter="store" v-model="createForm.name">
+                                           @keyup.enter="store" v-model="createForm.name">
 
                                     <span class="form-text text-muted">
                                         Something your users will recognize and trust.
@@ -118,7 +118,7 @@
 
                                 <div class="col-md-9">
                                     <input type="text" class="form-control" name="redirect"
-                                                    @keyup.enter="store" v-model="createForm.redirect">
+                                           @keyup.enter="store" v-model="createForm.redirect">
 
                                     <span class="form-text text-muted">
                                         Your application's authorization callback URL.
@@ -172,7 +172,7 @@
 
                                 <div class="col-md-9">
                                     <input id="edit-client-name" type="text" class="form-control"
-                                                                @keyup.enter="update" v-model="editForm.name">
+                                           @keyup.enter="update" v-model="editForm.name">
 
                                     <span class="form-text text-muted">
                                         Something your users will recognize and trust.
@@ -186,7 +186,7 @@
 
                                 <div class="col-md-9">
                                     <input type="text" class="form-control" name="redirect"
-                                                    @keyup.enter="update" v-model="editForm.redirect">
+                                           @keyup.enter="update" v-model="editForm.redirect">
 
                                     <span class="form-text text-muted">
                                         Your application's authorization callback URL.
@@ -215,6 +215,9 @@
         /*
          * The component's data.
          */
+        beforeRouteEnter(to, from, next) {
+
+        },
         data() {
             return {
                 clients: [],
@@ -267,10 +270,13 @@
              * Get all of the OAuth clients for the user.
              */
             getClients() {
-                axios.get('/oauth/clients')
-                        .then(response => {
-                            this.clients = response.data;
-                        });
+                axios.get('/oauth/clients', {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token')
+                    }
+                }).then(response => {
+                    this.clients = response.data;
+                });
             },
 
             /**
@@ -317,33 +323,38 @@
             persistClient(method, uri, form, modal) {
                 form.errors = [];
 
-                axios[method](uri, form)
-                    .then(response => {
-                        this.getClients();
+                axios[method](uri, form, {
+                    headers: 'Bearer ' + localStorage.getItem('access_token')
+                }).then(response => {
+                    this.getClients();
 
-                        form.name = '';
-                        form.redirect = '';
-                        form.errors = [];
+                    form.name = '';
+                    form.redirect = '';
+                    form.errors = [];
 
-                        $(modal).modal('hide');
-                    })
-                    .catch(error => {
-                        if (typeof error.response.data === 'object') {
-                            form.errors = _.flatten(_.toArray(error.response.data.errors));
-                        } else {
-                            form.errors = ['Something went wrong. Please try again.'];
-                        }
-                    });
+                    $(modal).modal('hide');
+                }).catch(error => {
+                    if (typeof error.response === 'undefined') {
+                        form.errors = ['response went wrong. Please try again.'];
+                    } else if (typeof error.response.data === 'object') {
+                        form.errors = _.flatten(_.toArray(error.response.data.errors));
+                    } else {
+                        form.errors = ['Something went wrong. Please try again.'];
+                    }
+                });
             },
 
             /**
              * Destroy the given client.
              */
             destroy(client) {
-                axios.delete('/oauth/clients/' + client.id)
-                        .then(response => {
-                            this.getClients();
-                        });
+                axios.delete('/oauth/clients/' + client.id, {
+                    headers: {
+                        Authorization: 'Bearer ' + localStorage.getItem('access_token')
+                    }
+                }).then(response => {
+                    this.getClients();
+                });
             }
         }
     }

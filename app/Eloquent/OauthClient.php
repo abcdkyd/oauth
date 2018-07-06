@@ -15,6 +15,13 @@ class OauthClient extends Model
 {
     protected $table = 'oauth_clients';
 
+    protected $fillable = [
+        'user_id',
+        'name',
+        'secret',
+        'redirect',
+    ];
+
     protected $hidden = [
         'secret',
     ];

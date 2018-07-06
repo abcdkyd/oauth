@@ -511,110 +511,6 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(24);
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(10);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(10);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports) {
 
 /*
@@ -696,7 +592,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -922,6 +818,110 @@ function applyToTag (styleElement, obj) {
   }
 }
 
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(0);
+var normalizeHeaderName = __webpack_require__(24);
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(10);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(10);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ }),
 /* 6 */
@@ -14286,7 +14286,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(15);
-module.exports = __webpack_require__(61);
+module.exports = __webpack_require__(66);
 
 
 /***/ }),
@@ -14317,6 +14317,8 @@ Vue.component('passport-clients', __webpack_require__(45));
 Vue.component('passport-authorized-clients', __webpack_require__(51));
 
 Vue.component('passport-personal-access-tokens', __webpack_require__(56));
+
+Vue.component('oauth-login', __webpack_require__(61));
 
 var app = new Vue({
     el: '#app'
@@ -35473,7 +35475,7 @@ module.exports = __webpack_require__(21);
 var utils = __webpack_require__(0);
 var bind = __webpack_require__(8);
 var Axios = __webpack_require__(23);
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(5);
 
 /**
  * Create an instance of Axios
@@ -35556,7 +35558,7 @@ function isSlowBuffer (obj) {
 "use strict";
 
 
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(5);
 var utils = __webpack_require__(0);
 var InterceptorManager = __webpack_require__(32);
 var dispatchRequest = __webpack_require__(33);
@@ -36095,7 +36097,7 @@ module.exports = InterceptorManager;
 var utils = __webpack_require__(0);
 var transformData = __webpack_require__(34);
 var isCancel = __webpack_require__(12);
-var defaults = __webpack_require__(3);
+var defaults = __webpack_require__(5);
 var isAbsoluteURL = __webpack_require__(35);
 var combineURLs = __webpack_require__(36);
 
@@ -47755,7 +47757,7 @@ var content = __webpack_require__(47);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("2a28cc49", content, false, {});
+var update = __webpack_require__(4)("2a28cc49", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -47774,7 +47776,7 @@ if(false) {
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(4)(false);
+exports = module.exports = __webpack_require__(3)(false);
 // imports
 
 
@@ -48042,6 +48044,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     /*
      * The component's data.
      */
+    beforeRouteEnter: function beforeRouteEnter(to, from, next) {},
     data: function data() {
         return {
             clients: [],
@@ -48100,7 +48103,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         getClients: function getClients() {
             var _this = this;
 
-            axios.get('/oauth/clients').then(function (response) {
+            axios.get('/oauth/clients', {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token')
+                }
+            }).then(function (response) {
                 _this.clients = response.data;
             });
         },
@@ -48150,7 +48157,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
             form.errors = [];
 
-            axios[method](uri, form).then(function (response) {
+            axios[method](uri, form, {
+                headers: 'Bearer ' + localStorage.getItem('access_token')
+            }).then(function (response) {
                 _this2.getClients();
 
                 form.name = '';
@@ -48159,7 +48168,9 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
                 $(modal).modal('hide');
             }).catch(function (error) {
-                if (_typeof(error.response.data) === 'object') {
+                if (typeof error.response === 'undefined') {
+                    form.errors = ['response went wrong. Please try again.'];
+                } else if (_typeof(error.response.data) === 'object') {
                     form.errors = _.flatten(_.toArray(error.response.data.errors));
                 } else {
                     form.errors = ['Something went wrong. Please try again.'];
@@ -48174,7 +48185,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         destroy: function destroy(client) {
             var _this3 = this;
 
-            axios.delete('/oauth/clients/' + client.id).then(function (response) {
+            axios.delete('/oauth/clients/' + client.id, {
+                headers: {
+                    Authorization: 'Bearer ' + localStorage.getItem('access_token')
+                }
+            }).then(function (response) {
                 _this3.getClients();
             });
         }
@@ -48242,17 +48257,17 @@ var render = function() {
                   return _c("tr", [
                     _c("td", { staticStyle: { "vertical-align": "middle" } }, [
                       _vm._v(
-                        "\n                            " +
+                        "\n                        " +
                           _vm._s(client.id) +
-                          "\n                        "
+                          "\n                    "
                       )
                     ]),
                     _vm._v(" "),
                     _c("td", { staticStyle: { "vertical-align": "middle" } }, [
                       _vm._v(
-                        "\n                            " +
+                        "\n                        " +
                           _vm._s(client.name) +
-                          "\n                        "
+                          "\n                    "
                       )
                     ]),
                     _vm._v(" "),
@@ -48274,7 +48289,7 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n                                Edit\n                            "
+                            "\n                            Edit\n                        "
                           )
                         ]
                       )
@@ -48293,7 +48308,7 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n                                Delete\n                            "
+                            "\n                            Delete\n                        "
                           )
                         ]
                       )
@@ -48804,7 +48819,7 @@ var content = __webpack_require__(53);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("10846595", content, false, {});
+var update = __webpack_require__(4)("10846595", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -48823,7 +48838,7 @@ if(false) {
 /* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(4)(false);
+exports = module.exports = __webpack_require__(3)(false);
 // imports
 
 
@@ -49124,7 +49139,7 @@ var content = __webpack_require__(58);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(5)("4e7bd74e", content, false, {});
+var update = __webpack_require__(4)("4e7bd74e", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -49143,7 +49158,7 @@ if(false) {
 /* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(4)(false);
+exports = module.exports = __webpack_require__(3)(false);
 // imports
 
 
@@ -49855,6 +49870,232 @@ if (false) {
 
 /***/ }),
 /* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(62)
+}
+var normalizeComponent = __webpack_require__(2)
+/* script */
+var __vue_script__ = __webpack_require__(64)
+/* template */
+var __vue_template__ = __webpack_require__(65)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-749ceb89"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/OauthLogin.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-749ceb89", Component.options)
+  } else {
+    hotAPI.reload("data-v-749ceb89", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 62 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(63);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(4)("0da9224b", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-749ceb89\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./OauthLogin.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-749ceb89\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./OauthLogin.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 63 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(3)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n@font-face {\n    font-family: 'iconfont';\n    src: url('//at.alicdn.com/t/font_1463147324_946932.eot'); /* IE9*/\n    src: url('//at.alicdn.com/t/font_1463147324_946932.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */\n    url('http://at.alicdn.com/t/font_1463147324_946932.woff') format('woff'), /* chrome、firefox */\n    url('http://at.alicdn.com/t/font_1463147324_946932.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/\n    url('//at.alicdn.com/t/font_1463147324_946932.svg#iconfont') format('svg'); /* iOS 4.1- */\n}\n*[data-v-749ceb89]{margin: 0;padding: 0\n}\nli[data-v-749ceb89]{list-style: none;\n}\nform a[data-v-749ceb89]{text-decoration: none;\n}\nhtml[data-v-749ceb89],body[data-v-749ceb89] {\n    width: 100%;\n    height: 100%;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-flow: column nowrap;\n            flex-flow: column nowrap;\n    -webkit-box-pack: center;\n        -ms-flex-pack: center;\n            justify-content: center;\n}\n.wrapper[data-v-749ceb89]{text-align: center;\n}\n.header[data-v-749ceb89]{\n    font-size: 25px;\n    font-family: 微软雅黑;\n    color: rgb(98,94,91);\n}\n.header span[data-v-749ceb89]{\n    font-size: 30px;\n    font-family: \"Brush Script Std\";\n}\n.form a[data-v-749ceb89]{text-decoration: none;\n}\n.form[data-v-749ceb89]{\n    width: 460px;\n    height: 260px;\n    margin: 35px auto;\n    padding: 30px;\n    -webkit-box-shadow:0px 1px 2px 1px #aaaaaa,\n    inset 0px 1px 1px rgba(255,255,255,0.7);\n            box-shadow:0px 1px 2px 1px #aaaaaa,\n    inset 0px 1px 1px rgba(255,255,255,0.7);\n    border-radius: 3px;\n}\n.form ul[data-v-749ceb89]{\n    width: 100%;\n    height: 100%;\n    text-align: left;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-orient: vertical;\n    -webkit-box-direction: normal;\n        -ms-flex-flow: column nowrap;\n            flex-flow: column nowrap;\n    -webkit-box-pack: justify;\n        -ms-flex-pack: justify;\n            justify-content: space-between;\n}\nul li div[data-v-749ceb89]{\n    width: 100%;\n    height: 40px;\n    background: #e1dcd8;\n    color: rgb(98,94,91);\n    -webkit-box-shadow: inset 0px 2px 5px #aaaaaa;\n            box-shadow: inset 0px 2px 5px #aaaaaa;\n    border-radius: 5px;\n    position: relative;\n}\nul li .yonghu[data-v-749ceb89]{\n    font-family: iconfont;\n    position: absolute;\n    top: 8px;\n    left: 10px;\n}\nul li .mima[data-v-749ceb89]{\n    font-family: iconfont;\n    position: absolute;\n    top: 8px;\n    left: 10px;\n}\nul li div input[data-v-749ceb89]{\n    height: 40px;\n    width: 100%;\n    padding: 0 35px;\n    border: none;\n    background: #e1dcd8;\n    color: rgb(98,94,91);\n    -webkit-box-shadow:\n            0px 1px 1px rgba(255,255,255,0.7),\n            inset 0px 2px 5px #aaaaaa;\n            box-shadow:\n            0px 1px 1px rgba(255,255,255,0.7),\n            inset 0px 2px 5px #aaaaaa;\n    border-radius: 5px;\n}\nul li input[data-v-749ceb89]:focus{\n    outline: none;\n    background: #f5f2ef;\n}\nul .remember[data-v-749ceb89]{\n    font-size: 14px;\n    font-family: 微软雅黑;\n    font-weight: bold;\n    color: rgb(98,94,91);\n    position: relative;\n}\nul .remember input[type*=\"checkbox\"][data-v-749ceb89]{\n    width: 20px;\n    height: 20px;\n    vertical-align: super;\n    margin-right: 12px;\n    visibility: hidden;\n}\n.remember label[data-v-749ceb89] {\n    cursor: pointer;\n    position: absolute;\n    width: 22px;\n    height: 22px;\n    top: 7px;\n    left: 0;\n    background: #eee;\n    border:1px solid #cccccc;\n    border-radius: 4px;\n}\n/*Display the tick inside the checkbox*/\n.remember label[data-v-749ceb89]:after {\n    opacity: 0.4;\n    content: '';\n    position: absolute;\n    width: 12px;\n    height: 5px;\n    background: transparent;\n    top: 6px;\n    left: 4px;\n    border: 3px solid #74884a;\n    border-top: none;\n    border-right: none;\n\n    -webkit-transform: rotate(-45deg);\n    transform: rotate(-45deg);\n}\n/*Create the hover event of the tick*/\n.remember label[data-v-749ceb89]:hover::after {\n    opacity: 0.7;\n}\n/*Create the checkbox state for the tick*/\n.remember input[type=checkbox]:checked + label[data-v-749ceb89]:after {\n    opacity: 1;\n    border-color: #74884a;\n}\nul li a[data-v-749ceb89]{\n    font-size: 14px;\n    font-family: 黑体;\n    color: rgb(152,142,135);\n}\nul li input[type*=\"button\"][data-v-749ceb89]{\n    width: 100%;\n    height: 40px;\n    font-family: Arial, Helvetica, sans-serif;\n    font-size: 18px;\n    color: #ffffff;\n    background: -moz-linear-gradient(\n            top,\n            #94aa64 0%,\n            #7a924a 50%,\n            #607738);\n    background: -webkit-gradient(\n            linear, left top, left bottom,\n            from(#94aa64),\n            color-stop(0.50, #7a924a),\n            to(#607738));\n    border-radius: 5px;\n    border: 1px solid #7d8862;\n    -webkit-box-shadow:\n            0px 1px 0px rgba(170,170,170,1),\n            inset 0px 1px 1px rgba(255,255,255,0.7);\n    box-shadow:\n            0px 1px 0px rgba(170,170,170,1),\n            inset 0px 1px 1px rgba(255,255,255,0.7);\n    text-shadow:\n            0px -1px 0px rgba(000,000,000,0.3),\n            0px 0px 0px rgba(255,255,255,0);\n}\nul li input[type*=\"button\"][data-v-749ceb89]:hover{\n    opacity: 0.8;\n}\nul li input[type*=\"button\"][data-v-749ceb89]:active{\n    width: 100%;\n    height: 40px;\n    font-family: Arial, Helvetica, sans-serif;\n    font-size: 18px;\n    color: #ffffff;\n    background: -moz-linear-gradient(\n            top,\n            #607738 0%,\n            #7a924a 50%,\n            #94aa64 );\n    background: -webkit-gradient(\n            linear, left top, left bottom,\n            from(#607738),\n            color-stop(0.50, #7a924a),\n            to(#94aa64));\n    border-radius: 5px;\n    border: 1px solid #7d8862;\n    -webkit-box-shadow:\n            0px -1px 0px rgba(170,170,170,1),\n            inset 0px -1px 1px rgba(255,255,255,0.7);\n    box-shadow:\n            0px -1px 0px rgba(170,170,170,1),\n            inset 0px -1px 1px rgba(255,255,255,0.7);\n    text-shadow:\n            0px 1px 0px rgba(000,000,000,0.3),\n            0px 0px 0px rgba(255,255,255,0);\n}\n.footer[data-v-749ceb89]{\n    font-size: 12px;\n    font-family: 黑体;\n    color: rgb(98,94,91);\n}\n.footer a[data-v-749ceb89]{\n    color: rgb(152,142,135);\n}\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 64 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    data: function data() {
+        return {
+            form: {
+                username: '',
+                password: ''
+            }
+        };
+    },
+
+    methods: {
+        login: function login() {
+            axios.post('/api/user/token', this.form).then(function (response) {
+                localStorage.setItem('access_token', response.data.access_token);
+                window.location.href = '/clients';
+            });
+        }
+    }
+});
+
+/***/ }),
+/* 65 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "wrapper" }, [
+    _c("div", { staticClass: "header" }, [_vm._v("Login to Oauth")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form" }, [
+      _c("ul", [
+        _c("li", [
+          _c("div", { staticClass: "text" }, [
+            _c("span", { staticClass: "yonghu" }, [_vm._v("")]),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.form.username,
+                  expression: "form.username"
+                }
+              ],
+              attrs: { type: "text" },
+              domProps: { value: _vm.form.username },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.form, "username", $event.target.value)
+                }
+              }
+            })
+          ])
+        ]),
+        _vm._v(" "),
+        _c("li", [
+          _c("div", { staticClass: "password" }, [
+            _c("span", { staticClass: "mima" }, [_vm._v("")]),
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.form.password,
+                  expression: "form.password"
+                }
+              ],
+              attrs: { type: "password" },
+              domProps: { value: _vm.form.password },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.$set(_vm.form, "password", $event.target.value)
+                }
+              }
+            })
+          ])
+        ]),
+        _vm._v(" "),
+        _c("li", [
+          _c("input", {
+            attrs: { type: "button", value: "Login" },
+            on: { click: _vm.login }
+          })
+        ])
+      ])
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-749ceb89", module.exports)
+  }
+}
+
+/***/ }),
+/* 66 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
