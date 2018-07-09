@@ -20,6 +20,7 @@ Route::middleware(['auth:api'])->get('/user', function (Request $request) {
 Route::post('/token', 'Clients\AdminClientsController@token');
 Route::post('/user/token', 'User\AdminUserController@token');
 
+
 Route::prefix('clients')->group(function () {
     Route::post('/token', 'Clients\AdminClientsController@token');
 });
