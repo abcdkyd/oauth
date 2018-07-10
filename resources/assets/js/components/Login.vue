@@ -35,7 +35,7 @@
             login() {
                 axios.post('/user/login', this.form).then(response => {
                     localStorage.setItem('access_token', response.data.access_token);
-                    console.log(response);
+                    window.history.go(-1);
                 });
             }
         }

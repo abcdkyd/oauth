@@ -25,6 +25,9 @@ Route::prefix('clients')->group(function () {
     Route::post('/token', 'Clients\AdminClientsController@token');
 });
 
-Route::prefix('user')->middleware('client')->group(function () {
-    Route::get('/info', 'User\AdminUserController@getUserInfo');
+Route::prefix('clients')->group(function () {
+    Route::prefix('user')->middleware('client')->group(function () {
+        Route::get('/info', 'User\AdminUserController@getUserInfo');
+    });
 });
+

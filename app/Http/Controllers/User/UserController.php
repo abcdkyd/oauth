@@ -34,7 +34,7 @@ class UserController extends Controller
             ]);
         }
         // jwt
-        if(Auth::guard('web')->attempt([
+        if(!Auth::guard('web')->attempt([
             'name' => $request_data['username'],
             'password' => $request_data['password']
         ])) {
@@ -44,11 +44,6 @@ class UserController extends Controller
         };
 
         return redirect('/');
-//        $user = Auth::guard('web')->user();
-//
-//        return [
-//            'access_token' => $user->createToken('admin')->accessToken
-//        ];
     }
 
     public function username()

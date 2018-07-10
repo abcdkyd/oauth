@@ -25,10 +25,12 @@ class ClientsController extends BaseController
             'response_type' => 'required',
             'appid' => 'required',
             'redirect_uri' => 'required',
+            'scope' => 'required',
         ], [
             'response_type.required' => '缺少参数response_type',
             'appid.required' => '缺少参数appid',
             'redirect_uri.required' => '缺少参数redirect_uri',
+            'scope.required' => '缺少参数scope',
         ]);
 
         if ($validator->fails()) {
@@ -40,7 +42,7 @@ class ClientsController extends BaseController
         }
 
         $appid = openssl_decrypt(base64_decode($request_data['appid']), 'AES-256-CBC', config('aes-key'));
-$appid=$request_data['appid'];
+
         if (!$appid) {
             return response()->json([
                 'message' => '不支持普惠通平台的Appid'
@@ -64,14 +66,8 @@ $appid=$request_data['appid'];
             ]);
         }
 
-//        return view('vendor.passport.authorize', [
-//            'client' => $client->toArray(),
-//            'scopes' => [],
-//            'request' => $request
-//        ]);
-
         $query = http_build_query([
-            'client_id' => $request['appid'],
+            'client_id' => $appid,
             'redirect_uri' => $request['redirect_uri'],
             'response_type' => 'code',
             'scope' => '',
