@@ -57,7 +57,7 @@
 
                             <ul>
                                 @foreach ($scopes as $scope)
-                                    <li>{{ $scope['description'] }}</li>
+                                    <li>{{ $scope->description }}</li>
                                 @endforeach
                             </ul>
                         </div>

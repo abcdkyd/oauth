@@ -43,5 +43,17 @@ Route::prefix('clients')->group(function () {
 });
 
 Route::get('/callback', function (Request $request) {
-    return ['code' => $request->code];
+
+    $http = new GuzzleHttp\Client;
+
+    $params = [
+        'grant_type' => 'authorization_code',
+        'appid' => 'MS92L0lwL3Z6VHVXSHZsTGprNGNsUT09',
+        'secret' => '9EExdra0TIOw2rNUb1XMWQhFinFD1DKgaXwDVc9n',
+        'code' => $request->code,
+    ];
+
+    $response = $http->get(url('/clients/oauth2/access_token') . '?' . http_build_query($params));
+
+    return json_decode((string) $response->getBody(), true);
 });

@@ -43,34 +43,76 @@ class ClientsController extends BaseController
             ]);
         }
 
-
         return view('vendor.passport.prepare_authorize');
-//        $query = http_build_query([
-//            'client_id' => $appid,
-//            'redirect_uri' => $request['redirect_uri'],
-//            'response_type' => 'code',
-//            'scope' => '',
-//        ]);
-//
-//        return redirect(url('oauth/authorize') .'?'.$query);
     }
 
-    public function authorize(Request $request) {
+    public function authorize(Request $request)
+    {
 
         $request_data = $request->all();
 
+        $validator = validator($request_data, [
+            'appid' => 'required',
+            'secret' => 'required',
+            'code' => 'required',
+            'grant_type' => 'required',
+        ], [
+            'appid.required' => '缺少参数appid',
+            'response_type.required' => '缺少参数response_type',
+            'code.required' => '缺少参数code',
+            'grant_type.required' => '缺少参数grant_type',
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->getMessages();
+            $message = reset($message);
+            return response()->json([
+                'message' => $message[0]
+            ]);
+        }
+
+        $appid = openssl_decrypt(base64_decode($request_data['appid']), 'AES-256-ECB', config('aes-key'));
+
+        if (!$appid) {
+            return response()->json([
+                'message' => '不支持普惠通平台的Appid'
+            ]);
+        }
+
+        $client = OauthClient::query()
+            ->select(['id', 'name', 'redirect'])
+            ->where([
+                'id' => $appid,
+                'secret' => $request_data['secret']
+            ])
+            ->first();
+
+        if (!$client) {
+            return response()->json([
+                'message' => '不支持普惠通平台的Appid'
+            ]);
+        }
+
         $http = new Client();
 
-        $response = $http->post(url('/oauth/authorize'), [
+        $response = $http->post(url('/oauth/token'), [
             'form_params' => [
-                'response_type' => 'code',
-                'client_id' => $request_data['client_id'],
-                'redirect_uri' => $request_data['redirect_uri'],
-                'scope' => '',
+                'grant_type' => $request_data['grant_type'],
+                'client_id' => $appid,
+                'client_secret' => $request_data['secret'],
+                'code' => $request_data['code'],
+                'redirect_uri' => $client->redirect,
             ]
-        ])->withHeader('Authorization', 'Bearer ' . $request_data['access_token']);
+        ]);
 
-        return json_decode((string) $response->getBody(), true);
+        $result = json_decode((string) $response->getBody(), true);
+
+        return [
+            'secretKey' => $result['access_token'],
+            'expires_in' => $result['expires_in'],
+            'refresh_secretKey' => $result['refresh_token'],
+            'openid' => '123'
+        ];
     }
 
     public function prepareAuthorize(Request $request)
@@ -132,7 +174,7 @@ class ClientsController extends BaseController
             'client_id' => $appid,
             'redirect_uri' => $request['redirect_uri'],
             'response_type' => 'code',
-            'scope' => '',
+            'scope' => $request_data['scope'],
         ]);
 
         return redirect(url('oauth/authorize') .'?'.$query);

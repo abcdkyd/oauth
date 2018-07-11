@@ -34,7 +34,7 @@ class UserController extends Controller
             ]);
         }
         // jwt
-        if(!Auth::guard('web')->attempt([
+        if (!Auth::guard('web')->attempt([
             'name' => $request_data['username'],
             'password' => $request_data['password']
         ])) {
@@ -45,6 +45,29 @@ class UserController extends Controller
 
         return 'ok';
 //        return redirect()->back();
+    }
+
+    public function getUserInfo(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        if (!$user) {
+            return response()->json([
+                'message' => '该用户不存在'
+            ]);
+        }
+
+        $user_info = array_only($user->toArray(), [
+            'nickname',
+            'realname',
+        ]);
+
+        $user_info = array_merge($user_info, [
+            'openid' => 0,
+            'sex' => ''
+        ]);
+
+        return response()->json($user_info);
     }
 
     public function username()
