@@ -5,7 +5,6 @@
     export default {
         mounted() {
             window.postMessage(JSON.stringify({"userVerify": "check_access"}));
-            this.userVerify();
         },
         methods: {
             userVerify(authKey) {
