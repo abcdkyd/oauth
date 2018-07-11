@@ -4,13 +4,13 @@
 <script>
     export default {
         mounted() {
-            setTimeout(function() {
-                let dataJson = {
-                    type : 'accountManage'
-                }
-                let str = JSON.stringify(dataJson)
-                window.postMessage(str, '*');
-            }, 500);
+            alert('mounted');
+            let dataJson = {
+                type : 'accountManage'
+            }
+            let str = JSON.stringify(dataJson)
+            window.parent.postMessage(str, '*');
+            this.postMessage();
         },
         methods: {
             postMessage() {
