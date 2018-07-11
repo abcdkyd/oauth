@@ -50379,15 +50379,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    updated: function updated() {
-        var dataJson = {
-            type: 'accountManage'
-        };
-        var str = JSON.stringify(dataJson);
-        window.postMessage(str, '*');
+    mounted: function mounted() {
+        this.postMessage();
     },
 
     methods: {
+        postMessage: function postMessage() {
+            var dataJson = {
+                type: 'accountManage'
+            };
+            var str = JSON.stringify(dataJson);
+            window.postMessage(str, '*');
+        },
         userVerify: function userVerify(authKey) {
             var stat = location.search.substr(1);
             window.location.href = '/clients/oauth2/redirect?' + stat + '&stat=' + authKey;
