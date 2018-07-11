@@ -10,9 +10,9 @@
 
 </head>
 <body>
+    <script src="{{ asset('js/app.js') }}"></script>
     <div id="app">
         <prepare-authorize></prepare-authorize>
     </div>
-    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
