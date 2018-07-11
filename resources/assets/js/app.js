@@ -35,6 +35,7 @@ Vue.component(
 
 Vue.component('oauth-login', require('./components/OauthLogin.vue'));
 Vue.component('login', require('./components/Login.vue'));
+Vue.component('prepare-authorize', require('./components/PrepareAuthorize.vue'));
 
 const app = new Vue({
     el: '#app'

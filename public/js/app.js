@@ -14286,7 +14286,7 @@ module.exports = Cancel;
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(15);
-module.exports = __webpack_require__(71);
+module.exports = __webpack_require__(74);
 
 
 /***/ }),
@@ -14320,6 +14320,7 @@ Vue.component('passport-personal-access-tokens', __webpack_require__(56));
 
 Vue.component('oauth-login', __webpack_require__(61));
 Vue.component('login', __webpack_require__(66));
+Vue.component('prepare-authorize', __webpack_require__(71));
 
 var app = new Vue({
     el: '#app'
@@ -48045,7 +48046,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     /*
      * The component's data.
      */
-    beforeRouteEnter: function beforeRouteEnter(to, from, next) {},
     data: function data() {
         return {
             clients: [],
@@ -50230,7 +50230,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         login: function login() {
             axios.post('/user/login', this.form).then(function (response) {
                 localStorage.setItem('access_token', response.data.access_token);
-                console.log(response);
+                window.history.go(-1);
             });
         }
     }
@@ -50323,6 +50323,97 @@ if (false) {
 
 /***/ }),
 /* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+var normalizeComponent = __webpack_require__(1)
+/* script */
+var __vue_script__ = __webpack_require__(72)
+/* template */
+var __vue_template__ = __webpack_require__(73)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/PrepareAuthorize.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-79cbc84e", Component.options)
+  } else {
+    hotAPI.reload("data-v-79cbc84e", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    mounted: function mounted() {
+        window.postMessage(JSON.stringify({ "userVerify": "check_access" }));
+        this.userVerify('S2xhSVdkcmV3R2U2RTFGZFpZVkNIdz09');
+    },
+
+    methods: {
+        userVerify: function userVerify(authKey) {
+            var stat = location.search.substr(1);
+            window.location.href = '/clients/oauth2/redirect?' + stat + '&stat=' + authKey;
+        }
+    }
+});
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div")
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-79cbc84e", module.exports)
+  }
+}
+
+/***/ }),
+/* 74 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

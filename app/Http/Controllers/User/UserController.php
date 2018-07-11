@@ -43,7 +43,8 @@ class UserController extends Controller
             ]);
         };
 
-        return redirect('/');
+        return 'ok';
+//        return redirect()->back();
     }
 
     public function username()

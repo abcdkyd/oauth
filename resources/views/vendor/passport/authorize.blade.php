@@ -37,31 +37,6 @@
             display: inline;
         }
     </style>
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script>
-
-        window.postMessage(JSON.stringify({"userVerify": "check_access"}));
-
-        function userVerify(authKey) {
-
-        }
-
-        export default {
-            data() {
-                return {
-                    form: {
-                        username: '',
-                        password: '',
-                    }
-                }
-            },
-            methods: {
-                userVerify(authKey) {
-
-                }
-            }
-        }
-    </script>
 </head>
 <body class="passport-authorize">
 <div class="container">

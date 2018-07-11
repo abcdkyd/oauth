@@ -215,9 +215,6 @@
         /*
          * The component's data.
          */
-        beforeRouteEnter(to, from, next) {
-
-        },
         data() {
             return {
                 clients: [],
