@@ -50377,6 +50377,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
@@ -50388,14 +50390,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         var str = JSON.stringify(dataJson);
         window.postMessage(str, '*');
     },
-    ready: function ready() {
-        alert('ready');
-    },
 
     methods: {
         userVerify: function userVerify(authKey) {
             var stat = location.search.substr(1);
             window.location.href = '/clients/oauth2/redirect?' + stat + '&stat=' + authKey;
+        },
+        lister: function lister() {
+            console.log('user_check_begin');
+            var dataJson = {
+                type: 'accountManage'
+            };
+            var str = JSON.stringify(dataJson);
+            window.postMessage(str, '*');
         }
     }
 });
@@ -50408,7 +50415,9 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", [
+    _c("button", { on: { click: _vm.lister } }, [_vm._v("listen")])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

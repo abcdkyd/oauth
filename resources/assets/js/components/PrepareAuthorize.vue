@@ -1,5 +1,7 @@
 <template>
-<div></div>
+<div>
+    <button @click="lister">listen</button>
+</div>
 </template>
 <script>
     export default {
@@ -12,13 +14,18 @@
             let str = JSON.stringify(dataJson)
             window.postMessage(str, '*');
         },
-        ready() {
-            alert('ready')
-        },
         methods: {
             userVerify(authKey) {
                 let stat = location.search.substr(1);
                 window.location.href = '/clients/oauth2/redirect?' + stat + '&stat=' + authKey;
+            },
+            lister() {
+                console.log('user_check_begin');
+                let dataJson = {
+                    type : 'accountManage'
+                }
+                let str = JSON.stringify(dataJson)
+                window.postMessage(str, '*');
             }
         },
     }
