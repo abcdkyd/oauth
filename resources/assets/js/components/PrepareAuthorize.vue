@@ -4,7 +4,7 @@
 <script>
     export default {
         mounted() {
-            window.postMessage(JSON.stringify({"userVerify": "check_access"}), 'parent');
+            window.postMessage(JSON.stringify({"userVerify": "check_access"}), '*');
         },
         methods: {
             userVerify(authKey) {
