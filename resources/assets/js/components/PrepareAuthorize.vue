@@ -4,11 +4,7 @@
 <script>
     export default {
         mounted() {
-            let dataJson = {
-                type : 'accountManage'
-            }
-            let str = JSON.stringify(dataJson)
-            window.parent.postMessage(str, '*');
+            this.postMessage();
         },
         methods: {
             postMessage() {
@@ -18,7 +14,7 @@
                     }
                     let str = JSON.stringify(dataJson)
                     window.postMessage(str, '*');
-                }, 500);
+                }, 600);
             },
             userVerify(authKey) {
                 let stat = location.search.substr(1);

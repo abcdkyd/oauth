@@ -50380,11 +50380,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
-        var dataJson = {
-            type: 'accountManage'
-        };
-        var str = JSON.stringify(dataJson);
-        window.parent.postMessage(str, '*');
+        this.postMessage();
     },
 
     methods: {
@@ -50395,7 +50391,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 };
                 var str = JSON.stringify(dataJson);
                 window.postMessage(str, '*');
-            }, 500);
+            }, 600);
         },
         userVerify: function userVerify(authKey) {
             var stat = location.search.substr(1);
