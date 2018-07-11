@@ -4,15 +4,23 @@
 <script>
     export default {
         mounted() {
-            this.postMessage();
-        },
-        methods: {
-            postMessage() {
+            setTimeout(function() {
                 let dataJson = {
                     type : 'accountManage'
                 }
                 let str = JSON.stringify(dataJson)
                 window.postMessage(str, '*');
+            }, 500);
+        },
+        methods: {
+            postMessage() {
+                setTimeout(function() {
+                    let dataJson = {
+                        type : 'accountManage'
+                    }
+                    let str = JSON.stringify(dataJson)
+                    window.postMessage(str, '*');
+                }, 500);
             },
             userVerify(authKey) {
                 let stat = location.search.substr(1);
