@@ -4,7 +4,13 @@
 <script>
     export default {
         mounted() {
-            this.postMessage();
+            window.onload = function() {
+                let dataJson = {
+                    type : 'accountManage'
+                }
+                let str = JSON.stringify(dataJson)
+                window.postMessage(str, '*');
+            }
         },
         methods: {
             postMessage() {

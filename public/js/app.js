@@ -50380,7 +50380,13 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     mounted: function mounted() {
-        this.postMessage();
+        window.onload = function () {
+            var dataJson = {
+                type: 'accountManage'
+            };
+            var str = JSON.stringify(dataJson);
+            window.postMessage(str, '*');
+        };
     },
 
     methods: {
