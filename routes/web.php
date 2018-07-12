@@ -37,9 +37,6 @@ Route::prefix('clients')->group(function () {
     });
 
     Route::get('/oauth2/authorize', 'Clients\ClientsController@redirect');
-    Route::get('/oauth2/authorize2', function() {
-        return view('vendor.passport.prepare_authorize_parent');
-    });
     Route::get('/oauth2/redirect', 'Clients\ClientsController@prepareAuthorize');
     Route::get('/oauth2/access_token', 'Clients\ClientsController@authorize');
 
