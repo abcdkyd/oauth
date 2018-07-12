@@ -15,19 +15,18 @@
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        window.onload = function() {
-            setTimeout(function() {
-                let dataJson = {
-                    type : 'accountManage'
-                }
-                let str = JSON.stringify(dataJson)
-                window.postMessage(str, '*');
-            }, 100)
-        }
+        setTimeout(function() {
+            let dataJson = {
+                type : 'accountManage'
+            }
+            let str = JSON.stringify(dataJson)
+            window.postMessage(str, '*');
+        }, 100)
         function userVerify(authKey) {
             let stat = location.search.substr(1);
             window.location.href = '/clients/oauth2/redirect?' + stat + '&stat=' + authKey;
         }
+
     </script>
 </body>
 </html>
