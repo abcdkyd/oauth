@@ -7,6 +7,13 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>用户授权</title>
+</head>
+<body>
+
+    <div id="app">
+        <prepare-authorize></prepare-authorize>
+    </div>
+    <script src="{{ asset('js/app.js') }}"></script>
     <script>
         window.onload = function() {
             setTimeout(function() {
@@ -22,12 +29,5 @@
             window.location.href = '/clients/oauth2/redirect?' + stat + '&stat=' + authKey;
         }
     </script>
-</head>
-<body>
-
-    <div id="app">
-        <prepare-authorize></prepare-authorize>
-    </div>
-    <script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
