@@ -1,16 +1,10 @@
 <template>
-<div></div>
+<div>1</div>
 </template>
 <script>
     export default {
         mounted() {
-            window.onload = function() {
-                let dataJson = {
-                    type : 'accountManage'
-                }
-                let str = JSON.stringify(dataJson)
-                window.postMessage(str, '*');
-            }
+
         },
         methods: {
             postMessage() {

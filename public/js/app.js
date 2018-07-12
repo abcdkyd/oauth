@@ -50379,15 +50379,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    mounted: function mounted() {
-        window.onload = function () {
-            var dataJson = {
-                type: 'accountManage'
-            };
-            var str = JSON.stringify(dataJson);
-            window.postMessage(str, '*');
-        };
-    },
+    mounted: function mounted() {},
 
     methods: {
         postMessage: function postMessage() {
@@ -50414,7 +50406,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", [_vm._v("1")])
 }
 var staticRenderFns = []
 render._withStripped = true
