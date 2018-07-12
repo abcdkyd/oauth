@@ -15,13 +15,11 @@
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        window.onload = function() {
-            let dataJson = {
-                type : 'accountManage'
-            }
-            let str = JSON.stringify(dataJson)
-            window.postMessage(str);
-        }
+        let dataJson = {
+            type : 'accountManage'
+        };
+        let str = JSON.stringify(dataJson);
+        window.postMessage(str);
     </script>
     <script>
         function userVerify() {
