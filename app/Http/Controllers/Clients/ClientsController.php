@@ -16,6 +16,7 @@ use Illuminate\Routing\Controller as BaseController;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 
+
 class ClientsController extends BaseController
 {
     public function redirect(Request $request)
@@ -140,12 +141,16 @@ class ClientsController extends BaseController
         }
 
         if (isset($request_data['stat']) && !empty($request_data['stat'])) {
-            $stat_id = openssl_decrypt(base64_decode($request_data['stat']), 'AES-256-ECB', config('aes-key'));
-            Auth::guard()->loginUsingId($stat_id);
+
+            $stat =  Auth::guard('jwt')->setToken($request_data['stat'])->payload();
+            $payload = $stat->toArray();
+
+            if (isset($payload['sub']) && !empty($payload['sub'])) {
+                Auth::guard('web')->loginUsingId($payload['sub']);
+            }
         }
 
         $appid = openssl_decrypt(base64_decode($request_data['appid']), 'AES-256-ECB', config('aes-key'));
-
 
         if (!$appid) {
             return response()->json([
