@@ -28,6 +28,7 @@ Route::prefix('clients')->group(function () {
 Route::prefix('clients')->group(function () {
     Route::prefix('user')->middleware('client')->group(function () {
         Route::get('/info', 'User\UserController@getUserInfo');
+        Route::get('/openid', 'User\UserController@getUserOpenid');
     });
 });
 

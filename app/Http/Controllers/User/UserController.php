@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Eloquent\OauthClient;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -73,5 +74,77 @@ class UserController extends Controller
     public function username()
     {
         return 'name';
+    }
+
+    public function getUserOpenid(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        if (!$user) {
+            return response()->json([
+                'errorCode' => '100000',
+                'message' => '该用户不存在',
+            ]);
+        }
+
+        $user_id = Auth::guard('api')->user()->id;
+
+        $appid = $request->input('appid', '');
+        $secret = $request->input('secret', '');
+
+        if (empty($appid) || empty($secret)) {
+            return [
+                'errorCode' => '100001',
+                'openid' => '',
+                'message' => '缺少参数'
+            ];
+        }
+
+        $appid_ = openssl_decrypt(base64_decode($appid), 'AES-256-ECB', config('aes-key'));
+
+        $client_key = OauthClient::query()
+            ->where('id', $appid_)->value('key');
+
+        if (empty($client_key)) {
+            return [
+                'errorCode' => '400000',
+                'openid' => '',
+                'message' => '渠道验证失败'
+            ];
+        }
+
+        try {
+            $openid = openssl_encrypt($user_id . '_' . $appid, 'AES-128-ECB', $secret);
+
+            $user_openid = \DB::select('select meta_value from member_meta where member_id = ? and meta_key = ?'
+                , [$user_id, $client_key . '_openid']);
+
+            $user_openid = $user_openid[0]->meta_value;
+
+            if (!empty($user_openid)) {
+                if ($user_openid !== $openid) {
+                    return [
+                        'errorCode' => '400001',
+                        'openid' => '',
+                        'message' => '渠道验证失败'
+                    ];
+                }
+            } else {
+                \DB::insert('insert into member_meta (member_id, meta_key, meta_value, created_at) values(?,?,?,?)'
+                    , [$user_id, $client_key . '_openid', $openid, date('Y-m-d H:i:s')]);
+            }
+        } catch (\Exception $e) {
+            return [
+                'errorCode' => '500000',
+                'openid' => '',
+                'message' => '验证系统异常'
+            ];
+        }
+
+        return [
+            'errorCode' => '000000',
+            'openid' => $openid,
+            'message' => 'ok',
+        ];
     }
 }

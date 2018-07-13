@@ -33,7 +33,48 @@ class AdminUserController extends Controller
 //        $this->server = $server;
 //    }
 
+    public function getUserInfo(Request $request)
+    {
+        $request_data = $request->all();
 
+        $validator = validator($request_data, [
+            'access_token' => 'required',
+            'openid' => 'required',
+        ], [
+            'access_token.required' => '缺少参数access_token',
+            'openid.required' => '缺少参数openid',
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->getMessages();
+            $message = reset($message);
+            return response()->json([
+                'message' => $message[0]
+            ]);
+        }
+
+        $user = User::query()
+            ->select([
+                'phone',
+                'avatar',
+                'birthday',
+                'nickname',
+                'realname',
+                'sex',
+            ])
+            ->where('id', $request_data['openid'])
+            ->where('status', 'normal')
+            ->first();
+
+        if ($user) {
+            $user = $user->toArray();
+            return $user;
+        }
+
+        return response()->json([
+            'message' => '该用户不存在'
+        ]);
+    }
 
     public function token(Request $request)
     {
