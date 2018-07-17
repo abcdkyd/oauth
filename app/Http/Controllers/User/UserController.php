@@ -12,6 +12,7 @@ use App\Eloquent\OauthClient;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -134,6 +135,7 @@ class UserController extends Controller
                     , [$user_id, $client_key . '_openid', $openid, date('Y-m-d H:i:s')]);
             }
         } catch (\Exception $e) {
+            Log::error('获取用户openid异常：' . $e->getLine() . '-->' . $e->getMessage());
             return [
                 'errorCode' => '500000',
                 'openid' => '',

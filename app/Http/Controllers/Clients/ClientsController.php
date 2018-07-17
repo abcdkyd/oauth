@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use League\OAuth2\Server\ResourceServer;
 
 
@@ -143,6 +144,7 @@ class ClientsController extends BaseController
                 'openid' => $response_data['openid']
             ];
         } catch (\Exception $e) {
+            Log::error('获取token异常：' . $e->getMessage());
             return response()->json([
                 'message' => '验证失败，请检查code是否有效'
             ]);
