@@ -38,12 +38,13 @@ Route::prefix('clients')->group(function () {
 
     Route::get('/oauth2/authorize', 'Clients\ClientsController@redirect');
     Route::get('/oauth2/redirect', 'Clients\ClientsController@prepareAuthorize');
-    Route::get('/oauth2/access_token', 'Clients\ClientsController@authorize');
+    Route::post('/oauth2/access_token', 'Clients\ClientsController@authorize');
+    Route::post('/oauth2/refresh_token', 'Clients\ClientsController@refreshToken');
 
 });
 
 Route::get('/callback', function (Request $request) {
-
+dd($request->all());
     $http = new GuzzleHttp\Client;
 
     $params = [

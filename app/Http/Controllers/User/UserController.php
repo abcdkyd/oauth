@@ -8,6 +8,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Eloquent\MemberMeta;
 use App\Eloquent\OauthClient;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -53,21 +54,43 @@ class UserController extends Controller
     {
         $user = Auth::guard('api')->user();
 
+        $openid = $request->input('open_id', '');
+
+        if (empty($openid)) {
+            return response()->json([
+                'errorCode' => '100000',
+                'message' => '缺少参数open_id'
+            ]);
+        }
+
         if (!$user) {
             return response()->json([
+                'errorCode' => '200000',
                 'message' => '该用户不存在'
             ]);
         }
 
-        $user_info = array_only($user->toArray(), [
-            'nickname',
-            'realname',
-        ]);
+        $channel = MemberMeta::query()->where([
+            'meta_value' => $openid,
+            'member_id' => $user->id,
+        ])->where('meta_key', 'like', '%\_openid')
+        ->value('meta_key');
 
-        $user_info = array_merge($user_info, [
-            'openid' => 0,
-            'sex' => ''
-        ]);
+        if (!$channel) {
+            return response()->json([
+                'errorCode' => '400006',
+                'message' => '该openid不存在'
+            ]);
+        }
+
+        $user_info = [
+            'errorCode' => '000000',
+            'open_id' => $openid,
+            'nickname' => $user->nickname,
+            'sex' => $user->sex,
+            'mobile' => $user->phone,
+            'headimgurl' => $user->avatar ?: '',
+        ];
 
         return response()->json($user_info);
     }
@@ -83,51 +106,52 @@ class UserController extends Controller
 
         if (!$user) {
             return response()->json([
-                'errorCode' => '100000',
+                'errorCode' => '200000',
                 'message' => '该用户不存在',
             ]);
         }
 
         $user_id = Auth::guard('api')->user()->id;
 
-        $appid = $request->input('appid', '');
+        $client_id = $request->input('client_id', '');
         $secret = $request->input('secret', '');
 
-        if (empty($appid) || empty($secret)) {
+        if (empty($client_id) || empty($secret)) {
             return [
-                'errorCode' => '100001',
+                'errorCode' => '100000',
                 'openid' => '',
                 'message' => '缺少参数'
             ];
         }
 
-        $appid_ = openssl_decrypt(base64_decode($appid), 'AES-256-ECB', config('aes-key'));
+        $client_id_ = openssl_decrypt(base64_decode($client_id), 'AES-256-ECB', config('aes-key'));
 
         $client_key = OauthClient::query()
-            ->where('id', $appid_)->value('key');
+            ->where('id', $client_id_)->value('key');
 
         if (empty($client_key)) {
             return [
-                'errorCode' => '400000',
+                'errorCode' => '400004',
                 'openid' => '',
                 'message' => '渠道验证失败'
             ];
         }
 
         try {
-            $openid = openssl_encrypt($user_id . '_' . $appid, 'AES-128-ECB', $secret);
+            $openid = openssl_encrypt($user_id . '_' . $client_id, 'AES-128-ECB', $secret);
 
             $user_openid = \DB::select('select meta_value from member_meta where member_id = ? and meta_key = ?'
                 , [$user_id, $client_key . '_openid']);
 
-            $user_openid = $user_openid[0]->meta_value;
-
             if (!empty($user_openid)) {
+
+                $user_openid = $user_openid[0]->meta_value;
+
                 if ($user_openid !== $openid) {
                     return [
-                        'errorCode' => '400001',
+                        'errorCode' => '400005',
                         'openid' => '',
-                        'message' => '渠道验证失败'
+                        'message' => '该渠道下的openid不正确'
                     ];
                 }
             } else {
@@ -137,7 +161,7 @@ class UserController extends Controller
         } catch (\Exception $e) {
             Log::error('获取用户openid异常：' . $e->getLine() . '-->' . $e->getMessage());
             return [
-                'errorCode' => '500000',
+                'errorCode' => '440001',
                 'openid' => '',
                 'message' => '验证系统异常'
             ];

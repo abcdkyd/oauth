@@ -70,10 +70,6 @@
 
                             <input type="hidden" name="state" value="{{ $request->state }}">
                             <input type="hidden" name="client_id" value="{{ $client['id'] }}">
-                            {{--<input type="hidden" name="response_type" value="code">--}}
-                            {{--<input type="hidden" name="redirect_uri" value="{{ $client['redirect'] }}">--}}
-                            {{--<input type="hidden" name="scope" value="">--}}
-                            {{--<input type="hidden" name="access_token" id="token">--}}
                             <button type="submit" class="btn btn-success btn-approve">确认登录</button>
                         </form>
                         <!-- Cancel Button -->

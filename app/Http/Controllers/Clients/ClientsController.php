@@ -34,12 +34,12 @@ class ClientsController extends BaseController
 
         $validator = validator($request_data, [
             'response_type' => 'required',
-            'appid' => 'required',
+            'client_id' => 'required',
             'redirect_uri' => 'required',
             'scope' => 'required',
         ], [
             'response_type.required' => '缺少参数response_type',
-            'appid.required' => '缺少参数appid',
+            'client_id.required' => '缺少参数client_id',
             'redirect_uri.required' => '缺少参数redirect_uri',
             'scope.required' => '缺少参数scope',
         ]);
@@ -48,6 +48,7 @@ class ClientsController extends BaseController
             $message = $validator->errors()->getMessages();
             $message = reset($message);
             return response()->json([
+                'errorCode' => '100000',
                 'message' => $message[0]
             ]);
         }
@@ -60,13 +61,13 @@ class ClientsController extends BaseController
         $request_data = $request->all();
 
         $validator = validator($request_data, [
-            'appid' => 'required',
-            'secret' => 'required',
+            'client_id' => 'required',
+            'client_secret' => 'required',
             'code' => 'required',
             'grant_type' => 'required',
         ], [
-            'appid.required' => '缺少参数appid',
-            'secret.required' => '缺少参数secret',
+            'client_id.required' => '缺少参数client_id',
+            'client_secret.required' => '缺少参数client_secret',
             'code.required' => '缺少参数code',
             'grant_type.required' => '缺少参数grant_type',
         ]);
@@ -75,29 +76,32 @@ class ClientsController extends BaseController
             $message = $validator->errors()->getMessages();
             $message = reset($message);
             return response()->json([
-                'message' => $message[0]
+                'errorCode' => '100000',
+                'message' => $message[0],
             ]);
         }
 
-        $appid = openssl_decrypt(base64_decode($request_data['appid']), 'AES-256-ECB', config('aes-key'));
+        $client_id = openssl_decrypt(base64_decode($request_data['client_id']), 'AES-256-ECB', config('aes-key'));
 
-        if (!$appid) {
+        if (!$client_id) {
             return response()->json([
-                'message' => '不支持普惠通平台的Appid'
+                'errorCode' => '400001',
+                'message' => '不支持普惠通平台的Client_id',
             ]);
         }
 
         $client = OauthClient::query()
             ->select(['id', 'name', 'redirect'])
             ->where([
-                'id' => $appid,
-                'secret' => $request_data['secret']
+                'id' => $client_id,
+                'secret' => $request_data['client_secret']
             ])
             ->first();
 
         if (!$client) {
             return response()->json([
-                'message' => '不支持普惠通平台的Appid'
+                'errorCode' => '400001',
+                'message' => '不支持普惠通平台的Client_id'
             ]);
         }
 
@@ -108,8 +112,8 @@ class ClientsController extends BaseController
             $response = $http->post(url('/oauth/token'), [
                 'form_params' => [
                     'grant_type' => $request_data['grant_type'],
-                    'client_id' => $appid,
-                    'client_secret' => $request_data['secret'],
+                    'client_id' => $client_id,
+                    'client_secret' => $request_data['client_secret'],
                     'code' => $request_data['code'],
                     'redirect_uri' => $client->redirect,
                 ]
@@ -118,8 +122,8 @@ class ClientsController extends BaseController
             $result = json_decode((string)$response->getBody(), true);
 
             $params = [
-                'appid' => $request_data['appid'],
-                'secret' => $request_data['secret'],
+                'client_id' => $request_data['client_id'],
+                'secret' => $request_data['client_secret'],
             ];
 
             $response = $http->request('GET', url('api/clients/user/openid') . '?' . http_build_query($params)
@@ -133,19 +137,21 @@ class ClientsController extends BaseController
 
             if ($response_data['errorCode'] !== '000000') {
                 return response()->json([
-                    'message' => '验证失败，请重新获取验证' . $response_data['errorCode']
+                    'errorCode' => '400000',
+                    'message' => '验证失败，请重新获取验证[' . $response_data['errorCode'] . ']',
                 ]);
             }
 
             return [
-                'secretKey' => $result['access_token'],
+                'access_token' => $result['access_token'],
                 'expires_in' => $result['expires_in'],
-                'refresh_secretKey' => $result['refresh_token'],
-                'openid' => $response_data['openid']
+                'refresh_token' => $result['refresh_token'],
+                'open_id' => $response_data['openid']
             ];
         } catch (\Exception $e) {
             Log::error('获取token异常：' . $e->getMessage());
             return response()->json([
+                'errorCode' => '440002',
                 'message' => '验证失败，请检查code是否有效'
             ]);
         }
@@ -157,12 +163,12 @@ class ClientsController extends BaseController
 
         $validator = validator($request_data, [
             'response_type' => 'required',
-            'appid' => 'required',
+            'client_id' => 'required',
             'redirect_uri' => 'required',
             'scope' => 'required',
         ], [
             'response_type.required' => '缺少参数response_type',
-            'appid.required' => '缺少参数appid',
+            'client_id.required' => '缺少参数client_id',
             'redirect_uri.required' => '缺少参数redirect_uri',
             'scope.required' => '缺少参数scope',
         ]);
@@ -171,6 +177,7 @@ class ClientsController extends BaseController
             $message = $validator->errors()->getMessages();
             $message = reset($message);
             return response()->json([
+                'errorCode' => '100000',
                 'message' => $message[0]
             ]);
         }
@@ -185,38 +192,120 @@ class ClientsController extends BaseController
             }
         }
 
-        $appid = openssl_decrypt(base64_decode($request_data['appid']), 'AES-256-ECB', config('aes-key'));
+        $client_id = openssl_decrypt(base64_decode($request_data['client_id']), 'AES-256-ECB', config('aes-key'));
 
-        if (!$appid) {
+        if (!$client_id) {
             return response()->json([
-                'message' => '不支持普惠通平台的Appid'
+                'errorCode' => '400001',
+                'message' => '不支持普惠通平台的Client_id'
             ]);
         }
 
         $client = OauthClient::query()
             ->select(['id', 'name', 'redirect'])
-            ->where('id', $appid)
+            ->where('id', $client_id)
             ->first();
 
         if (!$client) {
             return response()->json([
-                'message' => '不支持普惠通平台的Appid'
+                'errorCode' => '400001',
+                'message' => '不支持普惠通平台的Client_id'
             ]);
         }
 
         if ($request_data['redirect_uri'] !== $client->redirect) {
             return response()->json([
+                'errorCode' => '400002',
                 'message' => 'redirect_uri域名与后台配置不一致'
             ]);
         }
 
         $query = http_build_query([
-            'client_id' => $appid,
+            'client_id' => $client_id,
             'redirect_uri' => $request['redirect_uri'],
             'response_type' => 'code',
             'scope' => $request_data['scope'],
         ]);
 
         return redirect(url('oauth/authorize') . '?' . $query);
+    }
+
+    public function refreshToken(Request $request)
+    {
+        $request_data = $request->all();
+
+        $validator = validator($request_data, [
+            'grant_type' => 'required',
+            'refresh_token' => 'required',
+            'client_id' => 'required',
+            'client_secret' => 'required',
+        ], [
+            'grant_type.required' => '缺少参数grant_type',
+            'refresh_token.required' => '缺少参数refresh_token',
+            'client_id.required' => '缺少参数client_id',
+            'client_secret.required' => '缺少参数client_secret',
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->getMessages();
+            $message = reset($message);
+            return response()->json([
+                'errorCode' => '100000',
+                'message' => $message[0]
+            ]);
+        }
+
+        $client_id = openssl_decrypt(base64_decode($request_data['client_id']), 'AES-256-ECB', config('aes-key'));
+
+        if (!$client_id) {
+            return response()->json([
+                'errorCode' => '400001',
+                'message' => '不支持普惠通平台的Client_id',
+            ]);
+        }
+
+        $client = OauthClient::query()
+            ->select(['id', 'name', 'redirect'])
+            ->where([
+                'id' => $client_id,
+                'secret' => $request_data['client_secret']
+            ])
+            ->first();
+
+        if (!$client) {
+            return response()->json([
+                'errorCode' => '400001',
+                'message' => '不支持普惠通平台的Client_id'
+            ]);
+        }
+
+        try {
+            $http = new Client();
+
+            $response = $http->post(url('/oauth/token'), [
+                'form_params' => [
+                    'grant_type' => $request_data['grant_type'],
+                    'refresh_token' => $request_data['refresh_token'],
+                    'client_id' => $client_id,
+                    'client_secret' => $request_data['client_secret'],
+                    'scope' => '',
+                ],
+            ]);
+
+            $result = json_decode((string) $response->getBody(), true);
+
+            return [
+                'errorCode' => '000000',
+                'access_token' => $result['access_token'],
+                'refresh_token' => $result['refresh_token'],
+                'expires_in' => $result['expires_in'],
+            ];
+
+        } catch (\Exception $e) {
+            return [
+                'errorCode' => '440003',
+                'message' => '刷新access_token失败',
+            ];
+        }
     }
 }
