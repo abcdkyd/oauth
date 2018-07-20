@@ -31,7 +31,7 @@ class AuthServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(now()->addHours(2));
         Passport::refreshTokensExpireIn(now()->addDays(30));
         Passport::tokensCan([
-            'snsapi_userinfo' => '获取普惠通用户信息',
+            'pht_userinfo' => '获取普惠通用户信息',
         ]);
     }
 }

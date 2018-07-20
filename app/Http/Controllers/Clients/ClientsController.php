@@ -16,6 +16,7 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use League\OAuth2\Server\ResourceServer;
+use App\Eloquent\MemberMeta;
 
 
 class ClientsController extends BaseController
@@ -292,7 +293,7 @@ class ClientsController extends BaseController
                 ],
             ]);
 
-            $result = json_decode((string) $response->getBody(), true);
+            $result = json_decode((string)$response->getBody(), true);
 
             return [
                 'errorCode' => '000000',
@@ -307,5 +308,84 @@ class ClientsController extends BaseController
                 'message' => '刷新access_token失败',
             ];
         }
+    }
+
+    public function callbackUnionpay(Request $request)
+    {
+        $user = Auth::guard('api')->user();
+
+        if (!$user) {
+            return response()->json([
+                'errorCode' => '200000',
+                'message' => '该用户不存在'
+            ]);
+        }
+
+        $request_data = $request->all();
+
+        $validator = validator($request_data, [
+            'open_id' => 'required',
+            'service_type' => 'required',
+            'trans_status' => 'required',
+            'trans_id' => 'required',
+            'trans_time' => 'required',
+        ], [
+            'open_id.required' => '缺少参数open_id',
+            'service_type.required' => '缺少参数service_type',
+            'trans_status.required' => '缺少参数trans_status',
+            'trans_id.required' => '缺少参数trans_id',
+            'trans_time.required' => '缺少参数trans_time',
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->getMessages();
+            $message = reset($message);
+            return response()->json([
+                'errorCode' => '100000',
+                'message' => $message[0]
+            ]);
+        }
+
+        $channel = MemberMeta::query()->where([
+            'meta_value' => $request_data['open_id'],
+            'member_id' => $user->id,
+        ])->where('meta_key', 'like', '%\_openid')
+            ->value('meta_key');
+
+        if (!$channel) {
+            return response()->json([
+                'errorCode' => '400006',
+                'message' => '该openid不存在'
+            ]);
+        }
+
+
+        $request_url = config('oauth.debug') ?
+            config('oauth.debug_conf.callback_unionpay_api_server')
+            : config('oauth.production_conf.callback_unionpay_api_server');
+
+
+        $encryptArr = [
+            'user_id' => $user->id,
+            'timestamp' => date('YmdHis'),
+            'callback_params' => json_encode($request_data),
+        ];
+
+        $encryptStr = '';
+
+        foreach ($encryptArr as $value) {
+            $encryptStr .= $value;
+        }
+
+        $token = base64_encode(md5("jhpm_unionpay@{$encryptStr}", true));
+        $encryptArr['token'] = $token;
+
+        $http = new Client();
+
+        $response = $http->post($request_url, [
+            'form_params' => $encryptArr,
+        ]);
+
+        return json_decode((string)$response->getBody(), true);
     }
 }

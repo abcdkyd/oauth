@@ -25,10 +25,14 @@ Route::prefix('clients')->group(function () {
     Route::post('/token', 'Clients\AdminClientsController@token');
 });
 
+// 用户相关api
 Route::prefix('clients')->group(function () {
     Route::prefix('user')->middleware('client')->group(function () {
         Route::get('/info', 'User\UserController@getUserInfo');
         Route::get('/openid', 'User\UserController@getUserOpenid');
     });
 });
+
+// 银联回调api
+Route::middleware('client')->post('/callback/unionpay', 'Clients\ClientsController@callbackUnionpay');
 

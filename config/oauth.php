@@ -7,5 +7,16 @@
  */
 
 return [
-    'aes-key' => 'O4ZutDL9UEABzc6bEEyrPYQCgadU1dLS'
+    'aes-key' => 'O4ZutDL9UEABzc6bEEyrPYQCgadU1dLS',
+
+    'debug' => true,
+
+    'debug_conf' => [
+        'callback_unionpay_api_server' => 'https://staging.phjrt.com/api/notify/callback/unionpay',
+
+    ],
+
+    'production_conf' => [
+        'callback_unionpay_api_server' => 'https://api.phjrt.com/api/notify/callback/unionpay',
+    ],
 ];
