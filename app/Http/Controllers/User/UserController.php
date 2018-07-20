@@ -46,8 +46,8 @@ class UserController extends Controller
             ]);
         };
 
-        return 'ok';
-//        return redirect()->back();
+        //return 'ok';
+        return redirect()->back();
     }
 
     public function getUserInfo(Request $request)
