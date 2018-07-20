@@ -44,7 +44,9 @@ Route::prefix('clients')->group(function () {
 });
 
 Route::get('/callback', function (Request $request) {
-dd($request->all());
+
+    return $request->all();
+
     $http = new GuzzleHttp\Client;
 
     $params = [
