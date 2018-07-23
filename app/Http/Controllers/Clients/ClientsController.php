@@ -109,7 +109,7 @@ class ClientsController extends BaseController
         }
 
         $http = new Client();
-        
+
         try {
             $response = $http->post(url('/oauth/token'), [
                 'form_params' => [
