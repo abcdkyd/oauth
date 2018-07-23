@@ -30,8 +30,11 @@ class ClientsController extends BaseController
 
     public function redirect(Request $request)
     {
+        Log::info('==========oauth跳转授权页面 start==========');
 //        dd(base64_encode(openssl_encrypt(5, 'AES-256-ECB', config('aes-key'))));
         $request_data = $request->all();
+
+        Log::info('oauth跳转授权页面接收参数：' . json_encode($request_data));
 
         $validator = validator($request_data, [
             'response_type' => 'required',
@@ -177,7 +180,11 @@ class ClientsController extends BaseController
 
     public function prepareAuthorize(Request $request)
     {
+        Log::info('==========oauth获取授权 start==========');
+
         $request_data = $request->all();
+
+        Log::info('oauth获取授权接收参数：' . json_encode($request_data));
 
         $validator = validator($request_data, [
             'response_type' => 'required',
@@ -253,7 +260,11 @@ class ClientsController extends BaseController
 
     public function refreshToken(Request $request)
     {
+        Log::info('==========oauth刷新token start==========');
+
         $request_data = $request->all();
+
+        Log::info('oauth刷新token接收参数：' . json_encode($request_data));
 
         $validator = validator($request_data, [
             'grant_type' => 'required',
@@ -346,7 +357,11 @@ class ClientsController extends BaseController
             ]);
         }
 
+        Log::info('==========oauth银联回调 start==========');
+
         $request_data = $request->all();
+
+        Log::info('oauth银联回调接收参数：' . json_encode($request_data));
 
         $validator = validator($request_data, [
             'open_id' => 'required',

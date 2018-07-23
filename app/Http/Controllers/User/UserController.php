@@ -102,6 +102,8 @@ class UserController extends Controller
 
     public function getUserOpenid(Request $request)
     {
+        Log::info('==========oauth获取用户openid start==========');
+
         $user = Auth::guard('api')->user();
 
         if (!$user) {
@@ -112,6 +114,10 @@ class UserController extends Controller
         }
 
         $user_id = Auth::guard('api')->user()->id;
+
+        $request_data = $request->all();
+
+        Log::info('oauth获取用户openid接收参数：' . json_encode($request_data));
 
         $client_id = $request->input('client_id', '');
         $secret = $request->input('secret', '');
