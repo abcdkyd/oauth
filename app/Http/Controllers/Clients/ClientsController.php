@@ -108,8 +108,6 @@ class ClientsController extends BaseController
             ]);
         }
 
-
-
         try {
 
             $http = new Client();
@@ -125,7 +123,6 @@ class ClientsController extends BaseController
             ]);
 
             $result = json_decode((string)$token_response->getBody(), true);
-            Log::debug($result);
 
             $params = [
                 'client_id' => $request_data['client_id'],
@@ -140,7 +137,7 @@ class ClientsController extends BaseController
                 ]);
 
             $openid_response_data = json_decode((string)$openid_response->getBody(), true);
-            Log::debug($openid_response_data);
+
             if ($openid_response_data['errorCode'] !== '000000') {
                 Log::error('验证失败(' . $request_data['client_id'] . ')['
                     . json_encode($request_data) . ']->>' . json_encode($openid_response_data));
@@ -158,6 +155,7 @@ class ClientsController extends BaseController
             ];
         } catch (\Exception $e) {
             Log::error('获取token异常：[' . $e->getLine() . ']' . $e->getMessage());
+            Log::debug('获取token异常：[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '440002',
                 'message' => '验证失败，请检查code是否有效'
