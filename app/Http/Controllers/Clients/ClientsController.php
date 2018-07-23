@@ -85,6 +85,7 @@ class ClientsController extends BaseController
         $client_id = openssl_decrypt(base64_decode($request_data['client_id']), 'AES-256-ECB', config('aes-key'));
 
         if (!$client_id) {
+            Log::error('不支持普惠通平台的Client_id[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400001',
                 'message' => '不支持普惠通平台的Client_id',
@@ -100,6 +101,7 @@ class ClientsController extends BaseController
             ->first();
 
         if (!$client) {
+            Log::error('不支持普惠通平台的Client_id[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400001',
                 'message' => '不支持普惠通平台的Client_id'
@@ -137,6 +139,8 @@ class ClientsController extends BaseController
             $response_data = json_decode((string)$response->getBody(), true);
 
             if ($response_data['errorCode'] !== '000000') {
+                Log::error('验证失败(' . $request_data['client_id'] . ')['
+                    . json_encode($request_data) . ']->>' . json_encode($response_data));
                 return response()->json([
                     'errorCode' => '400000',
                     'message' => '验证失败，请重新获取验证[' . $response_data['errorCode'] . ']',
@@ -150,7 +154,7 @@ class ClientsController extends BaseController
                 'open_id' => $response_data['openid']
             ];
         } catch (\Exception $e) {
-            Log::error('获取token异常：' . $e->getMessage());
+            Log::error('获取token异常：[' . $e->getLine() . ']' . $e->getMessage());
             return response()->json([
                 'errorCode' => '440002',
                 'message' => '验证失败，请检查code是否有效'
@@ -196,6 +200,7 @@ class ClientsController extends BaseController
         $client_id = openssl_decrypt(base64_decode($request_data['client_id']), 'AES-256-ECB', config('aes-key'));
 
         if (!$client_id) {
+            Log::error('不支持普惠通平台的Client_id[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400001',
                 'message' => '不支持普惠通平台的Client_id'
@@ -208,6 +213,7 @@ class ClientsController extends BaseController
             ->first();
 
         if (!$client) {
+            Log::error('不支持普惠通平台的Client_id[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400001',
                 'message' => '不支持普惠通平台的Client_id'
@@ -260,6 +266,7 @@ class ClientsController extends BaseController
         $client_id = openssl_decrypt(base64_decode($request_data['client_id']), 'AES-256-ECB', config('aes-key'));
 
         if (!$client_id) {
+            Log::error('不支持普惠通平台的Client_id[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400001',
                 'message' => '不支持普惠通平台的Client_id',
@@ -275,6 +282,7 @@ class ClientsController extends BaseController
             ->first();
 
         if (!$client) {
+            Log::error('不支持普惠通平台的Client_id[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400001',
                 'message' => '不支持普惠通平台的Client_id'
@@ -304,6 +312,7 @@ class ClientsController extends BaseController
             ];
 
         } catch (\Exception $e) {
+            Log::error('获取token异常：[' . $e->getLine() . ']' . $e->getMessage());
             return [
                 'errorCode' => '440003',
                 'message' => '刷新access_token失败',
@@ -354,12 +363,12 @@ class ClientsController extends BaseController
             ->value('meta_key');
 
         if (!$channel) {
+            Log::error('该openid不存在[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400006',
                 'message' => '该openid不存在'
             ]);
         }
-
 
         $request_url = config('oauth.debug') ?
             config('oauth.debug_conf.callback_unionpay_api_server')
@@ -383,12 +392,20 @@ class ClientsController extends BaseController
         $token = base64_encode(md5("jhpm_unionpay@{$encryptStr}", true));
         $encryptArr['token'] = $token;
 
-        $http = new Client();
+        try {
+            $http = new Client();
 
-        $response = $http->post($request_url, [
-            'form_params' => $encryptArr,
-        ]);
+            $response = $http->post($request_url, [
+                'form_params' => $encryptArr,
+            ]);
 
-        return json_decode((string)$response->getBody(), true);
+            return json_decode((string)$response->getBody(), true);
+        } catch (\Exception $e) {
+            Log::error('回调失败[' . json_encode($response) . ']');
+            return response()->json([
+                'errorCode' => '400006',
+                'message' => '回调失败，'
+            ]);
+        }
     }
 }
