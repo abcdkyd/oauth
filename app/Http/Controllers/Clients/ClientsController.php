@@ -30,7 +30,7 @@ class ClientsController extends BaseController
 
     public function redirect(Request $request)
     {
-//        dd(base64_encode(openssl_encrypt(4, 'AES-256-ECB', config('aes-key'))));
+//        dd(base64_encode(openssl_encrypt(5, 'AES-256-ECB', config('aes-key'))));
         $request_data = $request->all();
 
         $validator = validator($request_data, [
