@@ -123,6 +123,7 @@ class ClientsController extends BaseController
             ]);
 
             $result = json_decode((string)$token_response->getBody(), true);
+            Log::debug($result);
 
             $params = [
                 'client_id' => $request_data['client_id'],
@@ -304,6 +305,7 @@ class ClientsController extends BaseController
             ]);
 
             $result = json_decode((string)$response->getBody(), true);
+            Log::debug($result);
 
             return [
                 'errorCode' => '000000',
@@ -314,6 +316,7 @@ class ClientsController extends BaseController
 
         } catch (\Exception $e) {
             Log::error('获取token异常：[' . $e->getLine() . ']' . $e->getMessage());
+            Log::debug('获取token异常：refresh_token--[' . $request_data['refresh_token'] . ']');
             return [
                 'errorCode' => '440003',
                 'message' => '刷新access_token失败',
