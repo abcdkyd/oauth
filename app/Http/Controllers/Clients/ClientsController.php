@@ -215,6 +215,7 @@ class ClientsController extends BaseController
         }
 
         if ($request_data['redirect_uri'] !== $client->redirect) {
+            Log::error("[{$request_data['client_id']}]redirect_uri域名与后台配置不一致:({$request_data['redirect_uri']})");
             return response()->json([
                 'errorCode' => '400002',
                 'message' => 'redirect_uri域名与后台配置不一致'
