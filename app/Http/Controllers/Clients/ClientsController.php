@@ -108,10 +108,13 @@ class ClientsController extends BaseController
             ]);
         }
 
-        $http = new Client();
+
 
         try {
-            $response = $http->post(url('/oauth/token'), [
+
+            $http = new Client();
+
+            $token_response = $http->post(url('/oauth/token'), [
                 'form_params' => [
                     'grant_type' => $request_data['grant_type'],
                     'client_id' => $client_id,
@@ -121,28 +124,29 @@ class ClientsController extends BaseController
                 ]
             ]);
 
-            $result = json_decode((string)$response->getBody(), true);
+            $result = json_decode((string)$token_response->getBody(), true);
+            Log::debug($result);
 
             $params = [
                 'client_id' => $request_data['client_id'],
                 'secret' => $request_data['client_secret'],
             ];
 
-            $response = $http->request('GET', url('api/clients/user/openid') . '?' . http_build_query($params)
+            $openid_response = $http->request('GET', url('api/clients/user/openid') . '?' . http_build_query($params)
                 , [
                     'headers' => [
                         'Authorization' => 'Bearer ' . $result['access_token'],
                     ]
                 ]);
 
-            $response_data = json_decode((string)$response->getBody(), true);
-
-            if ($response_data['errorCode'] !== '000000') {
+            $openid_response_data = json_decode((string)$openid_response->getBody(), true);
+            Log::debug($openid_response_data);
+            if ($openid_response_data['errorCode'] !== '000000') {
                 Log::error('验证失败(' . $request_data['client_id'] . ')['
-                    . json_encode($request_data) . ']->>' . json_encode($response_data));
+                    . json_encode($request_data) . ']->>' . json_encode($openid_response_data));
                 return response()->json([
                     'errorCode' => '400000',
-                    'message' => '验证失败，请重新获取验证[' . $response_data['errorCode'] . ']',
+                    'message' => '验证失败，请重新获取验证[' . $openid_response_data['errorCode'] . ']',
                 ]);
             }
 
@@ -150,7 +154,7 @@ class ClientsController extends BaseController
                 'access_token' => $result['access_token'],
                 'expires_in' => $result['expires_in'],
                 'refresh_token' => $result['refresh_token'],
-                'open_id' => $response_data['openid']
+                'open_id' => $openid_response_data['openid']
             ];
         } catch (\Exception $e) {
             Log::error('获取token异常：[' . $e->getLine() . ']' . $e->getMessage());
