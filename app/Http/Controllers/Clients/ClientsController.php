@@ -59,7 +59,10 @@ class ClientsController extends BaseController
 
     public function authorize(Request $request)
     {
+        Log::info('==========oauth获取token start==========');
         $request_data = $request->all();
+
+        Log::info('oauth获取token接收参数：' . json_encode($request_data));
 
         $validator = validator($request_data, [
             'client_id' => 'required',
@@ -79,6 +82,14 @@ class ClientsController extends BaseController
             return response()->json([
                 'errorCode' => '100000',
                 'message' => $message[0],
+            ]);
+        }
+
+        if ($request_data['grant_type'] !== 'authorization_code') {
+            Log::error('参数grant_type的值有误：' . $request_data['grant_type']);
+            return response()->json([
+                'errorCode' => '100000',
+                'message' => '参数grant_type的值需为authorization_code',
             ]);
         }
 
@@ -316,7 +327,7 @@ class ClientsController extends BaseController
 
         } catch (\Exception $e) {
             Log::error('获取token异常：[' . $e->getLine() . ']' . $e->getMessage());
-            Log::debug('获取token异常：refresh_token--[' . $request_data['refresh_token'] . ']');
+            Log::debug('获取token异常：refresh_token[' . $request_data['refresh_token'] . ']');
             return [
                 'errorCode' => '440003',
                 'message' => '刷新access_token失败',
