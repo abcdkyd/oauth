@@ -108,10 +108,9 @@ class ClientsController extends BaseController
             ]);
         }
 
-
+        $http = new Client();
+        
         try {
-            $http = new Client();
-
             $response = $http->post(url('/oauth/token'), [
                 'form_params' => [
                     'grant_type' => $request_data['grant_type'],
