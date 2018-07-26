@@ -34,5 +34,5 @@ Route::prefix('clients')->group(function () {
 });
 
 // 银联回调api
-Route::middleware('client')->post('/callback/unionpay', 'Clients\ClientsController@callbackUnionpay');
+Route::post('/callback/unionpay', 'Clients\ClientsController@callbackUnionpay');
 

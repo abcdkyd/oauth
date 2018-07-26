@@ -254,7 +254,7 @@ class ClientsController extends BaseController
             'response_type' => 'code',
             'scope' => $request_data['scope'],
         ]);
-
+//dd( app('router')->getRoutes());
         return redirect(url('oauth/authorize') . '?' . $query);
     }
 

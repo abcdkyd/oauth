@@ -12,8 +12,8 @@ return [
     'debug' => true,
 
     'debug_conf' => [
-        'callback_unionpay_api_server' => 'https://staging.phjrt.com/api/notify/callback/unionpay',
-//        'callback_unionpay_api_server' => 'http://jhpm.beta/api/notify/callback/unionpay',
+//        'callback_unionpay_api_server' => 'https://staging.phjrt.com/api/notify/callback/unionpay',
+        'callback_unionpay_api_server' => 'http://jhpm.beta/api/notify/callback/unionpay',
 
     ],
 
