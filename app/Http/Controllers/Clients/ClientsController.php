@@ -354,12 +354,28 @@ class ClientsController extends BaseController
         Log::info('==========oauth银联回调 start==========');
         $input = new Stream('php://input');
 
-        Log::info('oauth银联回调接收输入流：' . $input->getContents());
+        $input_content = $input->getContents();
+
+        Log::info('oauth银联回调接收输入流：' . $input_content);
         Log::info('oauth银联回调接收输入流：' . json_encode($request->request));
+        Log::info('oauth银联回调接收数据类型：' . $request->getContentType());
 
-        $request_data = $request->all();
+        $request_data_ = $request->all();
+        Log::info('oauth银联回调接收参数：' . json_encode($request_data_));
 
-        Log::info('oauth银联回调接收参数：' . json_encode($request_data));
+        if (empty($input_content)) {
+            return response()->json([
+                'errorCode' => '100000',
+                'message' => '无效参数[empty]'
+            ]);
+        }
+        
+        $request_data = [];
+
+        foreach (explode('&', $input_content) as $input_val) {
+            list($key, $val) = explode('=', $input_val);
+            $request_data[$key] = $val;
+        }
 
         $validator = validator($request_data, [
             'open_id' => 'required',
