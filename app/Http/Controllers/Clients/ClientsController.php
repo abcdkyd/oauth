@@ -383,16 +383,15 @@ class ClientsController extends BaseController
             ])->where('meta_key', 'like', '%\_openid')
             ->first();
 
-        $channel = $member_meta->meta_key;
-        $user_id = $member_meta->member_id;
-
-        if (!$channel) {
+        if (!$member_meta || empty($member_meta->meta_key)) {
             Log::error('该openid不存在[' . json_encode($request_data) . ']');
             return response()->json([
                 'errorCode' => '400006',
                 'message' => '该openid不存在'
             ]);
         }
+
+        $user_id = $member_meta->member_id;
 
         $request_url = config('oauth.debug') ?
             config('oauth.debug_conf.callback_unionpay_api_server')
