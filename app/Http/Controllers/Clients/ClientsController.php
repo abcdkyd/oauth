@@ -377,11 +377,14 @@ class ClientsController extends BaseController
             ]);
         }
 
-        $channel = MemberMeta::query()->where([
-            'meta_value' => $request_data['open_id'],
-            'member_id' => $user->id,
-        ])->where('meta_key', 'like', '%\_openid')
-            ->value('meta_key');
+        $member_meta = MemberMeta::query()
+            ->where([
+                'meta_value' => $request_data['open_id'],
+            ])->where('meta_key', 'like', '%\_openid')
+            ->first();
+
+        $channel = $member_meta->meta_key;
+        $user_id = $member_meta->member_id;
 
         if (!$channel) {
             Log::error('该openid不存在[' . json_encode($request_data) . ']');
@@ -399,7 +402,7 @@ class ClientsController extends BaseController
         $request_data['describe'] = $request->input('describe', '');
 
         $encryptArr = [
-            'user_id' => $user->id,
+            'user_id' => $user_id,
             'timestamp' => date('YmdHis'),
             'callback_params' => json_encode($request_data),
         ];
