@@ -163,6 +163,8 @@ class ClientsController extends BaseController
                 ]);
             }
 
+            Log::debug('openid:' . $openid_response_data['openid']);
+
             return [
                 'access_token' => $result['access_token'],
                 'expires_in' => $result['expires_in'],
