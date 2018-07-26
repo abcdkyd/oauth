@@ -348,15 +348,6 @@ class ClientsController extends BaseController
 
     public function callbackUnionpay(Request $request)
     {
-        $user = Auth::guard('api')->user();
-
-        if (!$user) {
-            return response()->json([
-                'errorCode' => '200000',
-                'message' => '该用户不存在'
-            ]);
-        }
-
         Log::info('==========oauth银联回调 start==========');
 
         $request_data = $request->all();
