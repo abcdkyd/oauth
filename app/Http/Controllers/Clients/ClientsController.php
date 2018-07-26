@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use League\OAuth2\Server\ResourceServer;
 use App\Eloquent\MemberMeta;
+use Zend\Diactoros\Stream;
 
 
 class ClientsController extends BaseController
@@ -349,6 +350,9 @@ class ClientsController extends BaseController
     public function callbackUnionpay(Request $request)
     {
         Log::info('==========oauth银联回调 start==========');
+        $input = new Stream('php://input');
+
+        Log::info('oauth银联回调接收输入流：' . $input->getContents());
 
         $request_data = $request->all();
 
