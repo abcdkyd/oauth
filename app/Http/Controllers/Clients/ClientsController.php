@@ -355,6 +355,7 @@ class ClientsController extends BaseController
         $input = new Stream('php://input');
 
         Log::info('oauth银联回调接收输入流：' . $input->getContents());
+        Log::info('oauth银联回调接收输入流：' . json_encode($request->request));
 
         $request_data = $request->all();
 
