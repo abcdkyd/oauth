@@ -445,7 +445,7 @@ class ClientsController extends BaseController
                 'form_params' => $encryptArr,
             ]);
 
-            Log::debug('回调结果[' . json_encode($response) . ']');
+            Log::debug('回调结果[' . json_encode($response->getBody()) . ']');
 
             return json_decode((string)$response->getBody(), true);
         } catch (\Exception $e) {
