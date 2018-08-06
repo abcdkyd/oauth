@@ -445,9 +445,11 @@ class ClientsController extends BaseController
                 'form_params' => $encryptArr,
             ]);
 
+            Log::debug('回调结果[' . json_encode($response) . ']');
+
             return json_decode((string)$response->getBody(), true);
         } catch (\Exception $e) {
-            Log::error('回调失败[' . json_encode($response) . ']');
+            Log::error('回调异常' . $e->getMessage());
             return response()->json([
                 'errorCode' => '400006',
                 'message' => '回调失败，'
