@@ -421,7 +421,7 @@ class ClientsController extends BaseController
             : config('oauth.production_conf.callback_unionpay_api_server');
 
 
-        $request_data['describe'] = $request->input('describe', '');
+        $request_data['describe'] = $request_data['describe'] ?? '';
 
         $encryptArr = [
             'user_id' => $user_id,
