@@ -373,7 +373,7 @@ class ClientsController extends BaseController
         $request_data = [];
 
         foreach (explode('&', $input_content) as $input_val) {
-            list($key, $val) = explode('=', $input_val);
+            list($key, $val) = explode('=', $input_val, 2);
             $request_data[$key] = $val;
         }
 
